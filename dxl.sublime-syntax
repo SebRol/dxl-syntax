@@ -1,0 +1,1183 @@
+%YAML 1.2
+---
+
+####################################################
+# DXL Keyword and Syntax definition for Sublime Text
+####################################################
+# This is the Syntax Definition of the DXL Programming Language for text editor Sublime Text.
+# This is a YAML file.
+# This file contains all Keywords, Type names, Function names, Constant names, and so on, of the DXL programming language as of release 9.6.1.
+####################################################
+# See https://www.ibm.com/support/knowledgecenter/de/SSYQBZ_9.6.1/com.ibm.doors.requirements.doc/topics/dxl_reference_manual.pdf?view=kc
+# See https://www.sublimetext.com/docs/3/syntax.html
+####################################################
+# Copyright (c) 2020 SebRol
+# This file is licensed under the MIT License.
+# See https://github.com/SebRol/dxl-syntax/blob/master/LICENSE
+####################################################
+
+name: DXL
+file_extensions: [dxl, inc]
+scope: source.dxl
+
+contexts:
+
+  double_quoted_string:
+    - meta_scope: string.quoted.double
+    - match: '\\.'
+      scope: constant.character.escape
+    - match: '"'
+      scope: punctuation.definition.string.end
+      pop: true
+
+  line_comment:
+    - meta_scope: comment.line
+    - match: $
+      pop: true
+
+  main:
+    # Strings begin and end with quotes, and use backslashes as an escape
+    # character
+    - match: '"'
+      scope: punctuation.definition.string.begin
+      push: double_quoted_string
+
+    # Single line comment
+    - match: '//'
+      scope: punctuation.definition.comment
+      push: line_comment
+
+    # Multi line comment
+    - match: '/\*'
+      scope: punctuation.definition.comment.begin
+      push:
+        - meta_scope: comment.block
+        - match: '\*/'
+          scope: punctuation.definition.comment.end
+          pop: true
+
+    # Numbers
+    - match: '\b(-)?[0-9.]+\b'
+      scope: constant.numeric
+
+
+    # Sublime Text: Top-level list of scopes is sorted alphabetically
+    #################################################################
+    # comment.        Single and multi-line comments should use, respectively: comment.line, comment.block
+    # constant.       Numeric literals, including integers, floats, etc. should use one of: integer, float, complex.
+    # entity.         The entity scopes are generally assigned to the names of data structures, types and other uniquely-identifiable constructs in code and markup.
+    # invalid.        Elements that are illegal in a specific context should use this scope.
+    # keyword.        Control keywords examples include if, try, end and while.
+    # markup.         Markup scopes are used for content, as opposed to code.
+    # meta.           Meta scopes are used to scope larger sections of code or markup, generally containing multiple, more specific scopes. These are not intended to be styled by a color scheme, but used by preferences and plugins.
+    # punctuation.    The following scopes are punctuation scopes that are not embedded within other scopes.
+    # source.         A language-specific variant of the following scope is typically applied to the entirety of a source code file.
+    # storage.        Types should use the following scope. Examples include int, bool and char.
+    # string.         Basic strings use the one of the following scopes, based on the type of quotes used: string.quoted.single, string.quoted.double, string.quoted.triple
+    # support.        Elements provided by a base framework should use one of the following scopes.
+    # text.           Programming languages use source. as their base scope, whereas content uses text.
+    # variable.       A generic variable should use the following scope. Some languages use the readwrite variant for contrast with the constant variant.
+
+    # Sublime Text: The following is a recommended minimal set of scopes to highlight
+    #################################################################################
+    # entity.name
+    # entity.other.inherited-class
+    # entity.name.section
+    # entity.name.tag
+    # entity.other.attribute-name
+    # variable
+    # variable.language
+    # variable.parameter
+    # variable.function
+    # constant
+    # constant.numeric
+    # constant.language
+    # constant.character.escape
+    # storage.type
+    # storage.modifier
+    # support
+    # keyword
+    # keyword.control
+    # keyword.operator
+    # keyword.declaration
+    # string
+    # comment
+    # invalid
+    # invalid.deprecated
+
+
+    ########################
+    # Chapter 1 Introduction
+    ########################
+
+    # Localizing DXL
+    - match: '\b(LS_)\b'
+      scope: entity.name.function
+
+    # Lexical conventions
+    - match: '\b(and|break|by|case|continue|default|do|else|enum|for|if|in|or|real|return|sizeof|struct|switch|then|union|while)\b'
+      scope: keyword.control
+
+    - match: '\b(void|const|static)\b'
+      scope: storage.modifier
+
+    - match: '\b(include|pragma)\b'
+      scope: keyword.declaration
+
+    - match: '\b(runLim|encoding|stack)\b'
+      scope: variable.language
+
+    # Types
+    - match: '\b(bool|real|char|int|string|null)\b'
+      scope: storage.type
+
+    # Basic functions
+    - match: '\b(print|of|sizeof|halt|checkDXL|sort|activateURL|batchMode|isBatch)\b'
+      scope: entity.name.function
+
+
+    ############################################
+    # Chapter 10 Fundamental types and functions
+    ############################################
+
+    # Type bool constants
+    - match: '\b(true|on|false|off)\b'
+      scope: constant.language
+
+    # Character classes
+    - match: '\b(isalpha|isupper|islower|isdigit|isxdigit|isalnum|isspace|ispunct|isprint|iscntrl|isascii|isgraph)\b'
+      scope: entity.name.function
+
+    # Operations on type int and real
+    - match: '\b(charOf|intOf|isValidInt|realOf|dateOf|stringOf|random|cos|sin|tan|exp|log|pow|sqrt)\b'
+      scope: entity.name.function
+
+    - match: '\b(pi)\b'
+      scope: constant.numeric.integer
+
+    # Operations on type string
+    - match: '\b(cistrcmp|length|lower|upper|soundex|backSlasher|findPlainText|unicodeString|escape|stripPath)\b'
+      scope: entity.name.function
+
+
+    ########################################
+    # Chapter 11 General language facilities
+    ########################################
+
+    # Data types
+    - match: '\b(Stream|ConfStream|Skip|Regexp)\b'
+      scope: entity.name.type
+
+    # Files and streams
+    - match: '\b(cin|cout|cerr)\b'
+      scope: variable.language
+
+    - match: '\b(canOpenFile|read|write|append|close|flush|readFile|goodFileName|tempFileName|currentDirectory|copyFile|deleteFile|renameFile|end|format)\b'
+      scope: entity.name.function
+
+    # Configuration file access
+    - match: '\b(confMkdir|confDeleteDirectory|confRead|confWrite|confAppend|confRenameFile|confCopyFile|confDeleteFile|confFileExists|close|end|confUploadFile|confDownloadFile|confDirectory)\b'
+      scope: entity.name.function
+
+    # Dates
+    - match: '\b(today|session|date|longDateFormats|includesTime|dateOnly|dateAndTime)\b'
+      scope: entity.name.function
+
+    # Skip lists
+    - match: '\b(create|createString|delete|find|key|put)\b'
+      scope: entity.name.function
+
+    # Regular expressions
+    - match: '\b(regexp|match|start|end|delete|regexp2)\b'
+      scope: entity.name.function
+
+    # Text buffers
+    - match: '\b(combine|contains|getDOSstring|create|delete|firstNonSpace|keyword|length|set|setempty|setupper|setlower|search|create|delete|get|put|putString|printCharArray)\b'
+      scope: entity.name.function
+
+    # Arrays
+    - match: '\b(create|delete|get|put|printCharArray)\b'
+      scope: entity.name.function
+
+
+    #######################################
+    # Chapter 12 Operating system interface
+    #######################################
+
+    # Data types
+    - match: '\b(Buffer|Stat|IPC)\b'
+      scope: entity.name.type
+
+    - match: '\b(putString)\b'
+      scope: entity.name.function
+
+    # Operating system commands
+    - match: '\b(platform|getMemoryUsage|getenv|hostname|fullHostname|mkdir|setenv|setServerMonitor|serverMonitorIsOn|username|system|create|delete|accessed|modified|changed|directory|symbolic|regular|user|size|mode)\b'
+      scope: entity.name.function
+
+    - match: '\b(S_ISUID|S_ISGID|S_IRWXU|S_IRUSR|S_IWUSR|S_IXUSR|S_IRWXG|S_IRGRP|S_IWGRP|S_IXGRP|S_IRWXO|S_IROTH|S_IWOTH|S_IXOTH)\b'
+      scope: constant.numeric.integer
+
+    # Windows registry
+    - match: '\b(getRegistry|setRegistry|deleteKeyRegistry|deleteValueRegistry)\b'
+      scope: entity.name.function
+
+    # Interprocess communications
+    - match: '\b(ipcHostname|server|getPort|client|accept|send|recv|disconnect|delete)\b'
+      scope: entity.name.function
+
+    # System clipboard functions
+    - match: '\b(copyToClipboard|setRichClip)\b'
+      scope: entity.name.function
+
+
+    #######################################
+    # Chapter 13 Customizing Rational DOORS
+    #######################################
+
+    # Data types
+    - match: '\b(Locale)\b'
+      scope: entity.name.type
+
+    # Color schemes
+    - match: '\b(getDefaultColorScheme|setDefaultColorScheme|optionsExist|resetColors|resetColor)\b'
+      scope: entity.name.function
+
+    - match: '\b(originalDOORSColorScheme|modernDOORSColorScheme|highContrastOneColorScheme|highContrastTwoColorScheme|highContrastBlackColorScheme|highContrastWhiteColorScheme)\b'
+      scope: constant.numeric.integer
+
+    # Database Explorer options
+    - match: '\b(getFontSettings|setFontSettings|refreshExplorer|synchExplorer|refreshDBExplorer|setShowFormalModules|setShowDescriptiveModules|setShowLinkModules|showFormalModules|showDescriptiveModules|showLinkModules|getSelectedItem)\b'
+      scope: entity.name.function
+
+    - match: '\b(HeadingsFont|TextFont|GraphicsFont)\b'
+      scope: constant.numeric.integer
+
+    # Mini database explorer
+    - match: '\b(fnMiniExplorer)\b'
+      scope: entity.name.function
+
+    - match: '\b(MINI_EXP_LINK_MODS|MINI_EXP_FORMAL_MODS|MINI_EXP_DESCRIPTIVE_MODS|MINI_EXP_FORMAL_MODS|MINI_EXP_LINK_MODS|MINI_EXP_SHOW_DELETED|MINI_EXP_SHOW_ALL_NO_DELETED)\b'
+      scope: constant.numeric.integer
+
+    # Locales
+    - match: '\b(getDateFormat|installedLocales|supportedLocales|userLocale|name|language|region|id|locale|installed|attributeValue|locale|getLegacyLocale|setLegacyLocale)\b'
+      scope: entity.name.function
+
+    # Codepages
+    - match: '\b(setLineSpacing|getLineSpacing|setLineSpacing|getLineSpacing|getDefaultLineSpacing|getFontSettings|setFontSettings|availableFonts|installedCodepages|supportedCodepages|currentANSIcodepage|codepageName|read|write|append|readFile|isValidChar|convertToCodepage|convertFromCodepage)\b'
+      scope: entity.name.function
+
+    - match: '\b(single|onePointFive|CP_LATIN1|CP_UTF8|CP_UNICODE|CP_UTF16_LE|CP_UTF16_BE|CP_JAP|CP_CHS|CP_KOR|CP_CHT)\b'
+      scope: constant.numeric.integer
+
+    # Message of the day
+    - match: '\b(setMessageOfTheDay|setMessageOfTheDayOption|getMessageOfTheDay|getMessageOfTheDayOption)\b'
+      scope: entity.name.function
+
+    # Database Properties
+    - match: '\b(setLoginFailureText|getLoginFailureText|setDatabaseMailPrefixText|getDatabaseMailPrefixText|setEditDXLControlled|getEditDXLControlled)\b'
+      scope: entity.name.function
+
+
+    ###########################################
+    # Chapter 14 Rational DOORS database access
+    ###########################################
+
+    # Data types
+    - match: '\b(LoginPolicy|Group|User|GroupList|UserList|UserNotifyList|LdapItem)\b'
+      scope: entity.name.type
+
+    # Database properties
+    - match: '\b(getDatabaseName|setDatabaseName|getAccountsDisabled|setAccountsDisabled|getDatabaseIdentifier|getDatabasePasswordRequired|setDatabasePasswordRequired|getReconfirmPasswordRequired|setReconfirmPasswordRequired|getReconfirmPasswordTimeout|setReconfirmPasswordTimeout|getRequireLettersInPassword|setRequireLettersInPassword|getRequireNumberInPassword|setRequireNumberInPassword|getRequireSymbolInPassword|setRequireSymbolInPassword|getDatabaseMinimumPasswordLength|setDatabaseMinimumPasswordLength|getMinPasswordGeneration|setMinPasswordGeneration|getMaxPasswordGenerationLimit|getMinPasswordAgeInDays|setMinPasswordAgeInDays|getMaxPasswordAgeLimit|getDatabaseMailServer|setDatabaseMailServer|getDatabaseMailServerAccount|setDatabaseMailServerAccount|getLoginPolicy|setLoginPolicy|getDisableLoginThreshold|setDisableLoginThreshold|getFailedLoginThreshold|setFailedLoginThreshold|getLoginLoggingPolicy|setLoginLoggingPolicy|setMinClientVersion|getMinClientVersion|setMaxClientVersion|getMaxClientVersion|doorsInfo|infoServerVersion|addNotifyUser|deleteNotifyUser|createPasswordDialog|changePasswordDialog|confirmPasswordDialog|copyPassword|getAdministratorName|sendEMailNotification|sendEMailMessage)\b'
+      scope: entity.name.function
+
+    - match: '\b(viaDOORSLogin|viaSystemLogin|groupList|userList)\b'
+      scope: constant.numeric.integer
+
+    - match: '\b(ldapGroupsForUser|userNotifyList)\b'
+      scope: variable.function
+
+    # Group and user manipulation
+    - match: '\b(find|findByID|existsGroup|existsUser|loadUserRecord|ensureUserRecordLoaded|saveUserRecord|loadDirectory|saveDirectory|copyPassword|fullName|mayEditDXL|synergyUsername|forename|surname)\b'
+      scope: entity.name.function
+
+    # Group and user management
+    - match: '\b(isAttribute|isAttribute|isAttribute|delete|get|set|setGroup|setUser|addGroup|deleteGroup|addUser|deleteUser|addMember|deleteMember|deleteAllMembers|member|stringOf)\b'
+      scope: entity.name.function
+
+    - match: '\b(administrator|standard|databaseManager|projectManager|custom)\b'
+      scope: constant.numeric.integer
+
+    - match: '\b(name|Disabled|address|email|description|name|password|systemLoginName|telephone|fullName|emailCPUpdates|mayArchive|mayCreateTopLevelFolders|mayEditGroupList|mayEditUserList|mayManage|mayPartition|passwordChanged|passwordMayChange|mayUseCommandLinePassword|additionalAuthenticationRequired|passwordLifetime|passwordMinimumLength|class)\b'
+      scope: variable.other.member
+
+    # LDAP
+    - match: '\b(saveLdapConfig|loadLdapConfig|getUseLdap|setUseLdap|updateUserList|updateGroupList)\b'
+      scope: entity.name.function
+
+    # LDAP Configuration
+    - match: '\b(findUserRDNFromName|findUserRDNFromLoginName|findGroupRDNFromName|findUserInfoFromDN|checkConnect|checkDN)\b'
+      scope: entity.name.function
+
+    # LDAP server information
+    - match: '\b(getLdapServerName|setLdapServerName|getPortNo|setPortNo|getDoorsBindNameDN|setDoorsBindNameDN|setDoorsBindPassword|setDoorsBindPasswordDB|getDoorsUserRoot|setDoorsUserRoot|getDoorsGroupRoot|setDoorsGroupRoot|getDoorsUserGroupDN|setDoorsUserGroupDN|getDoorsGroupGroupDN|setDoorsGroupGroupDN)\b'
+      scope: entity.name.function
+
+    # LDAP data configuration
+    - match: '\b(getDoorsUsernameAttribute|setDoorsUsernameAttribute|getLoginNameAttribute|setLoginNameAttribute|getEmailAttribute|setEmailAttribute|getDescriptionAttribute|setDescriptionAttribute|getTelephoneAttribute|setTelephoneAttribute|getAddressAttribute|setAddressAttribute|getGroupObjectClass|setGroupObjectClass|getGroupMemberAttribute|setGroupMemberAttribute|getGroupNameAttribute|setGroupNameAttribute|ldapRDN|utf8|ansi)\b'
+      scope: entity.name.function
+
+    # Rational Directory Server
+    - match: '\b(getUseTelelogicDirectory|setUseTelelogicDirectory|getTDServerName|setTDServerName|getTDPortNo|setTDPortNo|getTDBindName|setTDBindName|setTDBindPassword|setTDBindPassword|getTDUseDirectoryPasswordPolicy|setTDUseDirectoryPasswordPolicy|getAdditionalAuthenticationEnabled|getAdditionalAuthenticationPrompt|getSystemLoginConformityRequired|getCommandLinePasswordDisabled|setCommandLinePasswordDisabled)\b'
+      scope: entity.name.function
+
+
+    #####################################
+    # Chapter 15 Rational DOORS hierarchy
+    #####################################
+
+    # Data types
+    - match: '\b(Item|Folder|Project|ModName_)\b'
+      scope: entity.name.type
+
+    # Item access controls
+    - match: '\b(canCreate|canControl|canRead|canModify|canDelete)\b'
+      scope: entity.name.function
+
+    # Hierarchy clipboard
+    - match: '\b(clipCut|clipCopy|clipClear|clipPaste|clipUndo|clipLastOp|itemClipboardIsEmpty|inClipboard)\b'
+      scope: entity.name.function
+
+    # Hierarchy information
+    - match: '\b(folder|project|module|description|name|fullName|path|getParentFolder|getParentProject|isDeleted|setShowDeletedItems|type|uniqueID|qualifiedUniqueID|getReference|itemFromReference)\b'
+      scope: entity.name.function
+
+    # Hierarchy manipulation
+    - match: '\b(delete|undelete|purge|move|rename)\b'
+      scope: entity.name.function
+
+    # Items
+    - match: '\b(item|itemFromID)\b'
+      scope: entity.name.function
+
+    # Folders
+    - match: '\b(current|folder|convertProjectToFolder|convertFolderToProject|create|closeFolder)\b'
+      scope: entity.name.function
+
+    # Projects
+    - match: '\b(current|project|database|getInvalidCharInProjectName|isDeleted|isValidName|create|closeProject|openProject|doorsVersion)\b'
+      scope: entity.name.function
+
+
+    ####################
+    # Chapter 16 Modules
+    ####################
+
+    # Data types
+    - match: '\b(Module|ModuleVersion|BaselineSetDefinition|AccessRec|BaselineSet|History|HistoryType|HistorySession|ModuleProperties)\b'
+      scope: entity.name.type
+
+    # Module access controls
+    - match: '\b(canCreate|canControl|canModify|canDelete)\b'
+      scope: entity.name.function
+
+    # Module references
+    - match: '\b(current|module)\b'
+      scope: entity.name.function
+
+    # Module information
+    - match: '\b(baseline|exists|open|unsaved|version|canRead|canWrite|getSelectedCol|isRead|isEdit|isShare|getInvalidCharInModuleName|isValidDescription|isValidName|isValidPrefix|isVisible)\b'
+      scope: entity.name.function
+
+    # Module manipulation
+    - match: '\b(create|close|downgrade|printModule|read|edit|share|save|copy|hardDelete|softDelete|formalStatus|autoIndent)\b'
+      scope: entity.name.function
+
+    - match: '\b(manyToMany|manyToOne|oneToMany|oneToOne)\b'
+      scope: constant.numeric.integer
+
+    # Module display state
+    - match: '\b(level|filtering|graphics|outlining|showPictures|showTables|sorting|refresh|bringToFront)\b'
+      scope: entity.name.function
+
+    # Baselines
+    - match: '\b(baseline|baselineExists|create|delete|major|minor|suffix|annotation|user|dateOf|getMostRecentBaseline|getInvalidCharInSuffix|load|nextMajor|nextMinor|suffix|module|data|load|moduleVersion|isBaseline|baselineInfo|baselineExists|name|fullName|versionString|delete|getMostRecentBaseline)\b'
+      scope: entity.name.function
+
+    # Baseline Set Definition
+    - match: '\b(create|rename|name|setDescription|description|addModule|removeModule|delete|lock|unlock|save|read|isanyBaselineSetOpen|get|inherited|specific|isAccessInherited|set|unset|unsetAll)\b'
+      scope: entity.name.function
+
+    # Baseline Sets
+    - match: '\b(isBaselinePresent|create|major|minor|suffix|versionID|annotation|user|dateOf|isOpen|close|setAnnotation|addBaselines)\b'
+      scope: entity.name.function
+
+    # History
+    - match: '\b(goodStringOf|stringOf|print|number|when|who|baseline|diff)\b'
+      scope: entity.name.function
+
+    - match: '\b(unknown|createType|modifyType|deleteType|createAttr|modifyAttr|deleteAttr|createObject|copyObject|moveObject|modifyObject|deleteObject|unDeleteObject|purgeObject|clipCutObject|clipMoveObject|clipCopyObject|createModule|baselineModule|partitionModule|acceptModule|returnModule|rejoinModule|createLink|modifyLink|deleteLink|insertOLE|removeOLE|changeOLE|pasteOLE|cutOLE|readLocked)\b'
+      scope: constant.numeric.integer
+
+    - match: '\b(attrName|author|newPosition|position|type|typeName|targetInitialName|linkInitialName|plainOldValue|plainNewValue|plainOldUnicodeValue|plainNewUnicodeValue|date|absNo|numberOfObjects|oldAbsNo|sessionNo|sourceAbsNo|targetAbsNo|linkVersion|targetVersion|newValue|oldValue)\b'
+      scope: constant.character
+
+    # Link History
+    - match: '\b(lastModifiedTime)\b'
+      scope: entity.name.function
+
+    # Descriptive modules
+    - match: '\b(create|markUp|undoMarkUp|setUpExtraction|extractAfter|extractBelow)\b'
+      scope: entity.name.function
+
+    # Recently opened modules
+    - match: '\b(addRecentlyOpenModule|addRecentlyOpenModule|removeRecentlyOpenModule)\b'
+      scope: entity.name.function
+
+    - match: '\b(recentModules)\b'
+      scope: variable.function
+
+    # Module Properties
+    - match: '\b(getProperties|delete|find)\b'
+      scope: entity.name.function
+
+
+    ##################################
+    # Chapter 17 Electronic Signatures
+    ##################################
+
+    # Data types
+    - match: '\b(SignatureInfo|SignatureEntry|SignatureInfoSpecifier__|Permission|AccessRec)\b'
+      scope: entity.name.type
+
+    # Controlling Electronic Signature ACL
+    - match: '\b(hasPermission|hasPermission|do|set|unset|unsetAll|get)\b'
+      scope: entity.name.function
+
+    # Electronic Signature Data Manipulation
+    - match: '\b(getSignatureInfo|isBaselineSignatureConfigured|getLabelSpecifier|setLabelSpecifier|appendSignatureEntry|save|do|getUserName|getUserFullName|getEmail|getDate|getLocalDate|getFormattedLocalDate|getLabel|getLabelOptions|allAttributesReadable|getIsValid)\b'
+      scope: entity.name.function
+
+
+    ####################
+    # Chapter 18 Objects
+    ####################
+
+    # Data types
+    - match: '\b(Object)\b'
+      scope: entity.name.type
+
+    # Object access controls
+    - match: '\b(canCreate|canControl|canRead|canModify|canDelete|canLock|canUnlock)\b'
+      scope: entity.name.function
+
+    # Finding objects
+    - match: '\b(object|all|document|entire|module|top)\b'
+      scope: entity.name.function
+
+    # Current object
+    - match: '\b(current)\b'
+      scope: entity.name.function
+
+    # Navigation from an object
+    - match: '\b(gotoObject|first|last|next|parent|previous|first|last)\b'
+      scope: entity.name.function
+
+    # Object management
+    - match: '\b(create|move|canDelete|flushDeletions|hardDelete|sectionNeedsSaved|softDelete|undelete|purgeObjects_|purgeObject_)\b'
+      scope: entity.name.function
+
+    # Information about objects
+    - match: '\b(canRead|canWrite|leaf|isDeleted|isFiltered|isOutline|isSelected|isVisible|modified|getColumnBottom|getColumnTop|level|identifier|number)\b'
+      scope: entity.name.function
+
+    # Selecting objects
+    - match: '\b(setSelection|deselect)\b'
+      scope: entity.name.function
+
+    # Object searching
+    - match: '\b(getSearchObject|clearSearchObject|highlightText|getInPlaceColumnIndex)\b'
+      scope: entity.name.function
+
+    # Miscellaneous object functions
+    - match: '\b(inplaceEditing|object|cut|copyFlat|copyHier|pasteSame|pasteDown|clearClipboard|clipboardIsEmpty|clipboardIsTransient|splitHeadingAndText|getCursorPosition)\b'
+      scope: entity.name.function
+
+
+    ##################
+    # Chapter 19 Links
+    ##################
+
+    # Data types
+    - match: '\b(Link|LinkModuleDescriptor|LinkRef|Linkset|ExternalLink|ExternalLinkBehavior)\b'
+      scope: entity.name.type
+
+    # Link access control
+    - match: '\b(canDelete)\b'
+      scope: entity.name.function
+
+    # Versioned links
+    - match: '\b(sourceVersion|targetVersion|echo|getSourceVersion)\b'
+      scope: entity.name.function
+
+    # Link management
+    - match: '\b(addLinkModuleDescriptor|removeLinkModuleDescriptor|setLinkModuleDescriptorsExclusive|getLinkModuleDescriptorsExclusive|getDescription|getName|getSourceName|getTargetName|getOverridable|setOverridable|getMandatory|setMandatory|delete|module|source|sourceAbsNo|target|targetAbsNo)\b'
+      scope: entity.name.function
+
+    # Default link module
+    - match: '\b(getDefaultLinkModule|setDefaultLinkModule)\b'
+      scope: entity.name.function
+
+    # Linksets
+    - match: '\b(create|delete|getSource|getTarget|linkset|load|setSource|setTarget|side1|side2|unload|getTargetModule)\b'
+      scope: entity.name.function
+
+    # External Links
+    - match: '\b(current|create|canDelete|source)\b'
+      scope: entity.name.function
+
+    - match: '\b(none|openAsURL)\b'
+      scope: constant.numeric.integer
+
+    # OSLC Link Discovery
+    - match: '\b(getCachedExternalLinkLifeTime|setCachedExternalLinkLifeTime|discoverLinks|linksDiscovered|discoverLinksForViews|linksDiscoveredForViews|discoverLinksForViewsAsync|discoverLinksAsync)\b'
+      scope: entity.name.function
+
+    # Rational DOORS URLs
+    - match: '\b(getURL|decodeURL|getlegacyURL|validateDOORSURL|isDefaultURL|getResourceURL|getResourceURLConfigOptions|decodeResourceURL)\b'
+      scope: entity.name.function
+
+
+    #######################
+    # Chapter 20 Attributes
+    #######################
+
+    # Data types
+    - match: '\b(AttrDef|AttrType|AttrBaseType)\b'
+      scope: entity.name.type
+
+
+    # Attribute values
+    - match: '\b(maximumAttributeLength|canRead|canWrite|type|attributes|unicodeString|getBoundedUnicode)\b'
+      scope: entity.name.function
+
+
+    # Attribute value access controls
+    - match: '\b(canCreate|canControl|canModify|canDelete)\b'
+      scope: entity.name.function
+
+
+    # Multi-value enumerated attributes
+    - match: '\b(isMember)\b'
+      scope: entity.name.function
+
+
+    # Attribute definitions
+    - match: '\b(changeBars|date|history|create|delete|exists|find|attributeValue|isAttributeValueInRange|getBoundedAttr|hasSpecificValue|isVisibleAttribute|modify|setDefault|setDXL|setName|setDescription|setBars|setDates|setHidden|setHistory|setInherit|setModule|setMulti|setObject|setLocale)\b'
+      scope: entity.name.function
+
+    - match: '\b(dxl|name|typeName|description|uri|canWrite|dxl|hidden|function|inherit|module|multi|nobars|nochanges|nohistory|object|system|useraccess|type|defval)\b'
+      scope: variable.other.member
+
+    # Attribute definition access controls
+    - match: '\b(canCreateDef|canCreateVal|canControlDef|canControlVal|canDeleteDef|canDeleteVal|canCreateAttrDefs)\b'
+      scope: entity.name.function
+
+    # Attribute types
+    - match: '\b(find|isRanged|isUsed|print|stringOf|getRealColorOptionForTypes|setRealColorOptionForTypes|setDescription|setURI|getURI)\b'
+      scope: entity.name.function
+
+    - match: '\b(attrDate|attrInteger|attrReal|attrText|attrString|attrUsername|attrEnumeration|canWrite|system|colors|colours|maxValue|maximum|minValue|minimum|values|type)\b'
+      scope: variable.other.member
+
+    # Attribute type access controls
+    - match: '\b(canCreate|canControl|canModify|canRead|canDelete|canCreateAttrTypes)\b'
+      scope: entity.name.function
+
+    # Attribute type manipulation
+    - match: '\b(create|delete|modify|setMaxValue|setMinValue)\b'
+      scope: entity.name.function
+
+    # DXL attribute
+    - match: '\b(attrDXLName)\b'
+      scope: constant.character
+
+
+    ############################
+    # Chapter 21 Access controls
+    ############################
+
+    # Data types
+    - match: '\b(Permission|AccessRec)\b'
+      scope: entity.name.type
+
+    # Controlling access
+    - match: '\b(none|read|create|modify|delete|control|write|change|partition|get|getDef|getVal|getImplied|inherited|inheritedDef|inheritedVal|isAccessInherited|isDefault|set|setDef|setVal|setImplied|specific|specificDef|specificVal|unset|unsetDef|unsetVal|unsetAllDef|unsetAllVal|username)\b'
+      scope: entity.name.function
+
+    # Locking
+    - match: '\b(isLockedByUser|lock|unlockDiscardAll|unlockSaveAll|unlockDiscardSection|unlockSaveSection)\b'
+      scope: entity.name.function
+
+
+    #########################
+    # Chapter 22 Dialog boxes
+    #########################
+
+    # Data types
+    - match: '\b(Icon|BE|DB|DBE|DropEvent|ScrollEvent|ScrollSide|Sensitivity|ToolCombo|ToolEditableCombo|ToolType)\b'
+      scope: entity.name.type
+
+    # Icons
+    - match: '\b(load|destroy)\b'
+      scope: entity.name.function
+
+    - match: '\b(iconDatabase|iconProject|iconProjectCut|iconProjectDeleted|iconProjectOpen|iconProjectOpenDeleted|iconFormal|iconFormalCut|iconFormalDeleted|iconLink|iconLinkCut|iconLinkDeleted|iconDescriptive|iconDescriptiveCut|iconDescriptiveDeleted|iconFolder|iconFolderCut|iconFolderDeleted|iconFolderOpen|iconFolderOpenDeleted|iconDatabase|iconGroup|iconGroupDisabled|iconUser|iconUserDisabled|iconReadOnly|iconNone|iconAuthenticatingUser)\b'
+      scope: constant.numeric.integer
+
+
+    # Message boxes
+    - match: '\b(ack|acknowledge|errorBox|infoBox|warningBox|confirm|query|messageBox)\b'
+      scope: entity.name.function
+
+    # Dialog box functions
+    - match: '\b(addAcceleratorKey|baseWin|block|busy|ready|centered|create|styleStandard|styleFixed|styleCentered|styleCentred|styleFloating|styleNoBorder|styleThemed|styleAutoParent|createButtonBar|createItem|createCombo|destroy|getPos|getSize|getTitle|getBorderSize|getCaptionHeight|help|gluedHelp|hide|raise|setFocus|ready|realize|release|show|showing|getParent|setParent|setPos|setCenteredSize|setSize|setTitle|setBaseWindowContext|startConfiguringMenus|stopConfiguringMenus|topMost|hasFocus|setDXLWindowAsParent|minimumSize)\b'
+      scope: entity.name.function
+
+    - match: '\b(odKeyNone|modKeyCtrl|modKeyShift)\b'
+      scope: constant.numeric.integer
+
+    # Common element operations
+    - match: '\b(addMenu|active|inactive|hide|setGotFocus|setLostFocus|show|delete|delete|empty|insert|noElems|select|selected|get|setTextChangeCB|toolBarEditGetString|set|setFocus|getBuffer|setFromBuffer|useRTFColour)\b'
+      scope: entity.name.function
+
+    - match: '\b(ddbUnavailable|ddbAvailable|ddbChecked)\b'
+      scope: constant.numeric.integer
+
+    # Simple elements for dialog boxes
+    - match: '\b(setLimits|getDate|set|get|getBuffer|setFromBuffer)\b'
+      scope: entity.name.function
+
+    - match: '\b(label|separator|splitter|frame|fileName|field|richField|slider|checkBox|radioBox|toggle|date)\b'
+      scope: variable.other.member
+
+    # Choice dialog box elements
+    - match: '\b(tab|list|multiList|selectedElems)\b'
+      scope: entity.name.function
+
+    # View elements
+    - match: '\b(listView|deleteColumn|insertColumn|getColumnValue|getCheck|setCheck|getSortColumn|setSortColumn|treeView|exists|layoutDXL|attributeDXL|getDXLFileHelp|getDXLFileName|templates|getTemplateFileName)\b'
+      scope: entity.name.function
+
+    - match: '\b(sourcePath|targetPath|sourceIsTreeView|sourceIsListView|targetIsTreeView|targetIsListView|sourceIndex|targetIndex|source|target)\b'
+      scope: variable.other.member
+
+    # Text editor elements
+    - match: '\b(text|richText|home|modified|get)\b'
+      scope: entity.name.function
+
+    # Buttons
+    - match: '\b(ok|apply|close|close)\b'
+      scope: entity.name.function
+
+    - match: '\b(topLeftArrow|upArrow|topRightArrow|leftArrow|allWaysArrow|rightArrow|bottomLeftArrow|downArrow|bottomRightArrow|leftRightArrow|upDownArrow)\b'
+      scope: constant.numeric.integer
+
+    # Canvases
+    - match: '\b(canvas|background|realBackground|color|realColor|font|height|width|rectangle|box|line|ellipse|draw|drawAngle|polarLine|polygon|bitmap|loadBitmap|drawBitmap|destroyBitmap|export|print|startPrintJob|endPrintJob)\b'
+      scope: entity.name.function
+
+    - match: '\b(keyInsert|keyDelete|keyHome|keyEnd|keyPageUp|keyPageDown|keyUp|keyDown|keyLeft|keyRight|keyHelp|keyF1|keyF2|keyF3|keyF4|keyF5|keyF6|keyF7|keyF8|keyF9|keyF10|keyF11|keyF12)\b'
+      scope: constant.numeric.integer
+
+    - match: '\b(EPS|EMF|WMF|PICT2|HTML)\b'
+      scope: constant.character
+
+    # Complex canvases
+    - match: '\b(inPlaceMove|inPlaceShow|inPlaceChoiceAdd|inPlaceCut|inPlaceCopy|inPlacePaste|inPlaceGet|inPlaceSet|inPlaceReset|inPlaceTextHeight|hasInPlace|addToolTip|clearToolTips|hasHeader|headerAddColumn|headerChange|headerRemoveColumn|headerReset|headerSelect|headerSetHighlight|headerShow|hasScrollbars|scrollSet|menuBar|statusBar|toolButton|toolToggle|toolRadio|toolCombo|toolSpacer|toolEditableCombo|updateToolBars|toolBarComboGetSelection|toolBarComboGetItem|toolBarComboSelect|toolBarComboCount|toolBarComboEmpty|toolBarComboAdd|toolBarComboInsert|toolBarComboDelete|toolBarVisible|toolBarMove|toolBarShow|createEditableCombo|toolBarComboCutCopySelectedText|toolBarComboPasteText)\b'
+      scope: entity.name.function
+
+    - match: '\b(inPlaceString|inPlaceText|inPlaceChoice|inPlaceTextFilled|inPlaceTextChange|scrollToEnd|scrollToHome|scrollPageUp|scrollPageDown|scrollUp|scrollDown|vertical|horizontal|ddbUnavailable|ddbAvailable|ddbChecked|ddbInvisible)\b'
+      scope: constant.numeric.integer
+
+    # Colors
+    - match: '\b(getLogicalColorName|getRealColor|getRealColorIcon|getRealColorName|setRealColor)\b'
+      scope: entity.name.function
+
+    - match: '\b(logicalCurrentObjectOutline|logicalGridLines|logicalDefaultColor|logicalPageBackgroundColor|logicalTextBackgroundColor|logicalCurrentBackgroundColor|logicalCurrentCellBackgroundColor|logicalTitleBackgroundColor|logicalReadOnlyTextBackgroundColor|logicalUnlockedTextBackgroundColor|logicalDataTextColor|logicalTitleTextColor|logicalSelectedTextColor|logicalReadOnlyTextColor|logicalDeletedTextColor|logicalHighIndicatorColor|logicalMediumIndicatorColor|logicalLowIndicatorColor|logicalGraphicsBackgroundColor|logicalGraphicsShadeColor|logicalGraphicsElideBoxColor|logicalGraphicsTextColor|logicalGraphicsBoxColor|logicalGraphicsLinkColor|logicalGraphicsCurrentColor|logicalGraphicsSelectedColor|logicalGraphicsBoxEdgeColor|logicalLinkPageBackgroundColor|logicalLinkTextBackgroundColor|logicalLinkCurrentBackgroundColor|logicalLinkTitleBackgroundColor|logicalLinkDataTextColor|logicalUser1Color|logicalUser2Color|logicalUser3Color|logicalUser4Color|logicalUser5Color|logicalPageBackgroundFilterColor|logicalPageBackgroundSortColor|logicalPageBackgroundFilterSortColor|logicalTitleBackgroundColor|logicalInPlaceTextColor|logicalInPlaceBackgroundColor|logicalPartitionOutTextColor|logicalPartitionInReadTextColor|logicalPartitionInWriteTextColor|logicalHighlightURLColor|logicalLinksOutIndicatorColor|logicalLinksInIndicatorColor|logical0IndicatorColor|logical11IndicatorColor|logical22IndicatorColor|logical33IndicatorColor|logical44IndicatorColor|logical55IndicatorColor|logical66IndicatorColor|logical77IndicatorColor|logical88IndicatorColor|logical100IndicatorColor|logicalPrintPreviewBackgroundColor|logicalPrintPreviewPageColor|logicalPrintPreviewTextColor|logicalPrintPreviewShadeColor    |colorLightBlue|colorMediumLightBlue|colorDarkTurquoise|colorPink|colorBlue|colorMaroon|colorRed|colorYellow|colorGreen|colorMagenta|colorCyan|colorWhite|colorOrange|colorBrown|colorBlack|colorGrey82|colorGrey77|colorRedGrey|colorGrey|realColor_Light_Blue2|realColor_Light_Blue|realColor_Dark_Turquoise|realColor_Pink|realColor_Blue|realColor_Maroon|realColor_Red|realColor_Yellow|realColor_Green|realColor_Cyan|realColor_Magenta|realColor_White|realColor_Orange|realColor_Brown|realColor_Purple|realColor_Navy|realColor_Sea_Green|realColor_Lime_Green|realColor_Rosy_Brown|realColor_Peru|realColor_Red_Grey|realColor_Firebrick|realColor_Thistle|realColor_Grey82|realColor_Grey77|realColor_Grey66|realColor_Grey55|realColor_Grey44|realColor_Grey33|realColor_Grey22|realColor_Grey11|realColor_Black|realColor_NewGrey1|realColor_NewGrey2|realColor_NewGrey3|realColor_NewGrey4)\b'
+      scope: constant.numeric.integer
+
+    # Simple placement
+    - match: '\b(beside|below|left|leftAligned|right|opposite|full|stacked)\b'
+      scope: entity.name.function
+
+    # Constrained placement
+    - match: '\b(left|right|top|bottom|flush|spaced|aligned|unattached|inside|form)\b'
+      scope: entity.name.function
+
+    # Progress bar
+    - match: '\b(progressStart|progressStartDisableCancel|progressStep|progressMessage|progressRange|progressCancelled|progressStop)\b'
+      scope: entity.name.function
+
+    # DBE resizing
+    - match: '\b(setExtraWidthShare|setExtraHeightShare)\b'
+      scope: entity.name.function
+
+    # HTML Control
+    - match: '\b(htmlView|set|setURL|getURL|get|get|setHTML|getHTML|getBuffer|getInnerText|setInnerText|getInnerHTML|setInnerHTML|getAttribute|setAttribute)\b'
+      scope: entity.name.function
+
+    # HTML Edit Control
+    - match: '\b(htmlEdit|htmlBuffer|set)\b'
+      scope: entity.name.function
+
+
+    ######################
+    # Chapter 23 Templates
+    ######################
+
+    # Data types
+    - match: '\b(Template)\b'
+      scope: entity.name.type
+
+    # Template functions
+    - match: '\b(template|instance)\b'
+      scope: entity.name.function
+
+
+    ##########################################
+    # Chapter 24 Rational DOORS window control
+    ##########################################
+
+    # Module status bars
+    - match: '\b(status|menuStatus|updateToolBars)\b'
+      scope: entity.name.function
+
+    # Rational DOORS built-in windows
+    - match: '\b(window|show|hide|editor|print)\b'
+      scope: entity.name.function
+
+    # Module menus
+    - match: '\b(createMenu|createButtonBar|createItem|createCombo|createEditableCombo|createPopup|separator|end)\b'
+      scope: entity.name.function
+
+    - match: '\b(clipCopyMenu|clipPasteMenu|clipboardMenu|projectMenu|moduleMenu|editMenu|oleMenu|viewMenu|objectMenu|linkMenu|linksetMenu|attributeMenu|columnMenu|extractMenu|toolsMenu|usersMenu|optionsMenu|helpMenu|objCopyMenu|objCreateMenu|objMoveMenu|objUnlockMenu|OLECutItem|OLECopyItem|OLEPasteItem|OLEPasteSpecialItem|OLEClearItem|OLEInsertItem|OLERemoveItem|OLEVerbItem|attrDefItem|attrTypeItem|clipCutItem|clipCopyFlatItem|clipCopyHierItem|clipPasteItem|clipPasteDownItem|clipClearItem|columnCreateItem|columnEditItem|columnDeleteItem|columnLeftJustifyItem|columnRightJustifyItem|columnCenterJustifyItem|columnFullJustifyItem|columnUseInGraphicsItem|columnUseAsToolTipsItem|dispGraphicsItem|dispOutlineItem|dispFilterDescendantsItem|dispFilteringItem|dispSortingItem|dispDeletionItem|dispReqOnlyItem|dispFilterParentsItem|dispGraphicsLinksItem|dispGraphicsToolTipsItem|dispLevelAllItem|dispLevel1Item|dispLevel2Item|dispLevel3Item|dispLevel4Item|dispLevel5Item|dispLevel6Item|dispLevel7Item|dispLevel8Item|dispLevel9Item|dispLevel10Item|editDXLItem|editUsersItem|EXIT_Item|extractSetupItem|extractSameItem|extractDownItem|filterItem|helpContentsItem|helpSearchItem|helpIndexItem|helpHelpItem|helpProjManItem|helpFormalItem|helpDescriptiveItem|helpLinkItem|helpAboutItem|inplaceRejectItem|inplaceAcceptItem|inplaceHeadingItem|inplaceTextItem|inplaceAttrItem|inplaceResetAttrItem|linkCreateItem|linkEditItem|linkDeleteItem|linkSourceItem|linkTargetItem|linkMatrixItem|linkGraphicsItem|linksetCreateItem|linksetDeleteItem|linksetRefreshItem|modAccessItem|modAttrEditItem|modBaselineItem|modCloseItem|modHistoryItem|modLayoutItem|modPrintItem|modSaveItem|modDowngradeItem|modPrintPreviewItem|objAccessItem|objCompressItem|objUncompressItem|objCompressionItem|objCopyItem|objCopyDownItem|objCreateItem|objCreateDownItem|objDeleteItem|objUndeleteItem|objPurgeItem|objEditItem|objHistoryItem|objMoveItem|objMoveDownItem|objLockItem|colorOptionsItem|fontOptionsItem|optionsSaveItem|optionsRestoreItem|optionsDefaultsItem|pictureItem|createProjectItem|openProjectItem|deleteProjectItem|undeleteProjectItem|purgeProjectItem|duplicateProjectItem|closeProjectItem|projectAttrItem|unlockModulesItem|purgeModulesItem|projectArchiveItem|projectRestoreItem|createFormalModuleItem|createLinkModuleItem|createDescriptiveModuleItem|openModuleEditItem|openModuleShareItem|openModuleReadItem|deleteModuleItem|undeleteModuleItem|purgeModuleItem|duplicateModuleItem|renameModuleItem|archiveModuleItem|restoreModuleItem|showFormalModulesItem|showLinkModulesItem|showDescriptiveModulesItem|showDeletedModulesItem|showDeletedProjectsItem|sortNameItem|sortTypeItem|sortDescriptionItem|selectItem|deselectItem|sortItem|spellCheckItem|undoItem|redoItem|viewCreateItem|viewShowItem|viewDeleteItem|linksetCombo|viewCombo|helpCombo|menuAvailable_|menuAvailableChecked_|menuUnavailable_|menuInvisible_|levelAllIcon|level1Icon|level2Icon|level3Icon|level4Icon|level5Icon|level6Icon|level7Icon|level8Icon|level9Icon|level10Icon|dispGraphicsIcon|dispOutlineIcon|dispFilterIcon|dispSortIcon|createObjSameIcon|createObjDownIcon|deleteObjIcon|columnInsertIcon|columnEditIcon|columnRemoveIcon|justifyLeftIcon|justifyRightIcon|justifyCenterIcon|justifyFullIcon|folderOpenIcon|folderNewIcon|folderCloseIcon|projOpenIcon|projNewIcon|projCloseIcon|editUsersIcon|createModIcon|editModIcon|shareModIcon|readModIcon|copyModIcon|deleteModIcon|createLinkIcon|editLinkIcon|deleteLinkIcon|matrixModeIcon|startLinkIcon|endLinkIcon|createLinksetIcon|createFormalModIcon|createLinkModIcon|deleteLinksetIcon|editHeadingIcon|editTextIcon|extractObjIcon|extractOneDownIcon|showMarkedObjsIcon|spellcheckIcon|undeleteModIcon|increaseLevelIcon|decreaseLevelIcon|noIcon|yesIcon|wordIcon|projWizIcon|viewWizIcon|layWizIcon|repWizIcon|repManIcon|tableCreateIcon|tableInsertRowIcon|tableInsertColIcon|tableSetBordersIcon|textBold|textItalic|textUnderline|textStrikeThrough|saveIcon|printIcon|propertiesIcon|copyIcon|cutIcon|pasteIcon|deleteIcon)\b'
+      scope: constant.numeric.integer
+
+    - match: '\b(menu|buttonbar|popup)\b'
+      scope: variable.function
+
+
+    ############################
+    # Chapter 25 Display control
+    ############################
+
+    # Data types
+    - match: '\b(Filter|LinkFilter|Sort|View|ViewDef|Column|Justification)\b'
+      scope: entity.name.type
+
+    # Filters
+    - match: '\b(attribute|column|accept|contents|contains|excludeCurrent|excludeLeaves|filterTables|getSimpleFilterType_|getAttributeFilterSettings_|getLinkFilterSettings_|getObjectFilterSettings_|getColumnFilterSettings_|includeCurrent|includeLeaves|hasLinks|hasNoLinks|isNull|notNull|reject|set|stringOf|ancestors|applyFiltering|unApplyFiltering|applyingFiltering)\b'
+      scope: entity.name.function
+
+    - match: '\b(linkFilterIncoming|linkFilterOutgoing|linkFilterBoth)\b'
+      scope: constant.numeric.integer
+
+    # Compound filters
+    - match: '\b(getCompoundFilterType_|getComponentFilter_|filterTypeAnd|filterTypeOr|filterTypeNot)\b'
+      scope: entity.name.function
+
+    # Filtering on multi-valued attributes
+    - match: '\b(includes|excludes)\b'
+      scope: entity.name.function
+
+    # Sorting modules
+    - match: '\b(ascending|descending|set|sorting|stringOf|isAscending|isDescending|destroySort)\b'
+      scope: entity.name.function
+
+    # Views
+    - match: '\b(currentView|descendants|view|delete|setPreloadedView|preloadedView|isinheritedView|isValidName|linkIndicators|linkIndicators|load|name|next|previous|clearDefaultViewForModule|clearDefaultViewForUser|getDefaultViewForModule|getDefaultViewForUser|save|setDefaultViewForModule|setDefaultViewForUser|showDeletedObjects|showDeletedObjects|showChangeBars|showChangeBars|showGraphicsDatatips|showGraphicsDatatips|showGraphicsLinks|showGraphicsLinks|showingExplorer|showExplorer|hideExplorer|showPrintDialogs|canInheritView|clearInvalidInheritanceOf|invalidInheritedView|setViewDescription|getViewDescription)\b'
+      scope: entity.name.function
+
+    # View access controls
+    - match: '\b(canCreate|canControl|canRead|canModify|canDelete|canWrite)\b'
+      scope: entity.name.function
+
+    # View definitions
+    - match: '\b(create|createPrivate|createPublic|get|change|delete|save|useAncestors|useDescendants|useCurrent|useSelection|useColumns|useFilterTables|useGraphicsColumn|useShowExplorer|useGraphics|useOutlining|useCompression|useLevel|useSorting|useFiltering|useShowDeleted|useShowPictures|useShowTables|useShowLinkIndicators|useShowLinks|useTooltipColumn|useWindows|useAutoIndentation)\b'
+      scope: entity.name.function
+
+    # Columns
+    - match: '\b(column|attribute|attrName|color|backgroundColor|backgroundColor|delete|dxl|graphics|info|insert|justify|main|link|changebar|text|title|width|currentColumn)\b'
+      scope: entity.name.function
+
+    - match: '\b(left|right|center|centre|full)\b'
+      scope: constant.numeric.integer
+
+    # Scrolling functions
+    - match: '\b(scroll)\b'
+      scope: entity.name.function
+
+    - match: '\b(scroll|top|bottom|to|to|up|down|page)\b'
+      scope: variable.function
+
+    # Layout DXL
+    - match: '\b(display|obj|displayRich|displayRichWithColor|getCanvas|hasPicture|exportPicture|isFirstObjectInDXLSet|isLastObjectInDXLSet|setRefreshDelta|getRefreshDelta|setManualRefresh|isManualRefresh)\b'
+      scope: entity.name.function
+
+
+    #######################
+    # Chapter 26 Partitions
+    #######################
+
+    # Data types
+    - match: '\b(PartitionDefinition|PartitionModule|PartitionAttribute|PartitionView|PartitionPermission|PartitionFile|PartitionDefinition|PartitionModule|PartitionAttribute|PartitionView|PartitionFile|InPartition|OutPartition|OutPartition|InPartition)\b'
+      scope: entity.name.type
+
+    # Partition definition management
+    - match: '\b(create|delete|dispose|copy|rename|load|loadInPartitionDef|save|saveModified|setDescription)\b'
+      scope: entity.name.function
+
+    # Partition definition contents
+    - match: '\b(addModule|addLinkModule|addAwayModule|addAwayLinkModule|findModule|findLinkset|findAttribute|findView|addAttribute|addAwayAttribute|addLinkset|addAwayLinkset|addView|addAwayView|removeModule|removeAttribute|removeLinkset|removeView|allowsAccess|setAccess)\b'
+      scope: entity.name.function
+
+    # Partition management
+    - match: '\b(apply|open|close|acceptReport|acceptPartition|returnPartition|rejoinReport|rejoinPartition|removePartition)\b'
+      scope: entity.name.function
+
+    # Partition information
+    - match: '\b(applyDate|folderName|rejoinedBy|rejoinedDate|acceptDate|applyDatefolderName|returnedBy|returnedDate)\b'
+      scope: entity.name.function
+
+    - match: '\b(description|name|author|date|definitionName|subtype|timestamp|type)\b'
+      scope: variable.other.member
+
+    # Partition access
+    - match: '\b(isPartitionedOut|isPartitionedOutDef|isPartitionedOutVal|getPartitionMask|getPartitionMaskDef|getPartitionMaskVal)\b'
+      scope: entity.name.function
+
+
+    ##################################################
+    # Chapter 27 Requirements Interchange Format (RIF)
+    ##################################################
+
+    # Data types
+    - match: '\b(RifImport|RifDefinition|RifModuleDefinition)\b'
+      scope: entity.name.type
+
+    # RIF export
+    - match: '\b(exportType|exportPackage)\b'
+      scope: entity.name.function
+
+    - match: '\b(exportRIF_1_2|exportReqIF)\b'
+      scope: constant.numeric.integer
+
+    # RIF import
+    - match: '\b(importRifFile)\b'
+      scope: entity.name.function
+
+    - match: '\b(mergeStarted|mergeCompleted|mergeRequired|mergeDisabled|importedBy|mergedBy|folder|exportTime|importTime|mergeTime)\b'
+      scope: variable.other.member
+
+    # RIF ID
+    - match: '\b(getRifID|getObjectByRifID)\b'
+      scope: entity.name.function
+
+    # Merge
+    - match: '\b(rifMerge)\b'
+      scope: entity.name.function
+
+    # RIF definition
+    - match: '\b(name|description|rifDefinitionIdentifer|createdLocally|canModify|project|dataConfigView|ddcView|createdLocally|moduleVersion|ddcMode)\b'
+      scope: variable.other.member
+
+    - match: '\b(ddcNone|ddcReadOnly|ddcByObject|ddcByAttribute|ddcFullModule)\b'
+      scope: constant.numeric.integer
+
+
+    ########################
+    # Chapter 28 OLE objects
+    ########################
+    # Data types
+    - match: '\b(EmbeddedOleObject|OleAutoObj|OleAutoArgs)\b'
+      scope: entity.name.type
+
+    # Embedded OLE objects and the OLE clipboard
+    - match: '\b(oleActivate|Declaration|oleCopy|oleCut|oleDelete|oleInsert|oleIsObject|oleCloseAutoObject|oleCloseAutoObject|oleRTF|olePaste|olePasteSpecial|olePasteLink|oleSaveBitmap|oleCount|isOleObjectSelected|showOlePropertiesDialog|containsOle)\b'
+      scope: entity.name.function
+
+    # OLE information functions
+    - match: '\b(getOleWidthHeight|oleSetMaxWidth|oleSetMinWidth|oleSetHeightandWidth|oleResetSize)\b'
+      scope: entity.name.function
+
+    # Picture object support
+    - match: '\b(changePicture|copyPictureObject|deletePicture|exportPicture|exportPicture|getPictBB|getPictFormat|getPictName|getPictWidthHeight|importPicture|insertBitmapFromClipboard|saveClipboardBitmapToFile|insertPictureAfter|insertPictureBelow|insertPictureFile|insertPictureFileAfter|insertPictureFileBelow|oleLoadBitmap|openPictFile|pictureCopy|reimportPicture|pictureCompatible)\b'
+      scope: entity.name.function
+
+    - match: '\b(formatBMP|formatDIB|formatWMF|formatEPSF|formatUNKNOWN|formatPNG)\b'
+      scope: constant.numeric.integer
+
+    # Automation client support
+    - match: '\b(oleGetResult|oleSetResult|oleCreateAutoObject|oleGetAutoObject|oleGet|olePut|create|delete|clear|put|oleMethod)\b'
+      scope: entity.name.function
+
+    # Controlling Rational DOORS from applications that support automation
+    - match: '\b(runFile|runStr)\b'
+      scope: entity.name.function
+
+
+    #####################
+    # Chapter 29 Triggers
+    #####################
+
+    # Data types
+    - match: '\b(Trigger|TriggerStatus)\b'
+      scope: entity.name.type
+
+    # Trigger constants
+    - match: '\b(project|module|object|attribute|links|discussion|comment|all|formal|link|descriptive|pre|post|open|read|close|save|modify|sync|create|delete)\b'
+      scope: constant.numeric.integer
+
+    # Trigger definition
+    - match: '\b(trigger|delete)\b'
+      scope: entity.name.function
+
+    # Trigger manipulation
+    - match: '\b(level|type|event|stringOf|attribute|attrdef|current|dxl|kind|levelModifier|name|object|module|version|link|value|priority|stored|scope|value)\b'
+      scope: entity.name.function
+
+    - match: '\b(trigPreConPass|trigPreConFail|trigRunOK|trigError)\b'
+      scope: constant.numeric.integer
+
+    # Drag-and-drop trigger functions
+    - match: '\b(createDropCallback|registeredFormat|dropDataAvailable|droppedString|droppedAttrTextAvailable|droppedAttributeText|droppedAttrRichTextAvailable|droppedAttributeRichText|droppedAttrOLETextAvailable|droppedAttributeOLEText|draggedObjects|droppedList|setDropString|setDropList|insertDroppedPicture|saveDroppedPicture|TYMED_MFPICT|TYMED_GDI|TYMED_HGLOBAL|TYMED_ENHMF)\b'
+      scope: entity.name.function
+
+    - match: '\b(CF_METAFILEPICT|CF_BITMAP|CF_DIB|CF_OEMTEXT|CF_HDROP|CF_MAX)\b'
+      scope: constant.numeric.integer
+
+
+    #################################
+    # Chapter 30 Page setup functions
+    #################################
+
+    # Data types
+    - match: '\b(PageLayout)\b'
+      scope: entity.name.type
+
+    # Page attributes status
+    - match: '\b(pageChangeBars|pagePortrait|pageRepeatTitles|pageTitlePage)\b'
+      scope: entity.name.function
+
+    # Page dimensions
+    - match: '\b(pageSize|pageWidth|pageHeight|pageTopMargin|pageBottomMargin|pageLeftMargin|pageRightMargin)\b'
+      scope: entity.name.function
+
+    # Document attributes
+    - match: '\b(pageBreakLevel|pageTOCLevel|pageBreakLevel|pageTOCLevel|pageHeaderFooter|pageExpandHF)\b'
+      scope: entity.name.function
+
+    # Page setup information
+    - match: '\b(current|pageColumns|pageFormat|pageColumns|pageFormat|pageTitlePage|pageSignaturePage|pageIncludeFilters|pageIncludeSort)\b'
+      scope: entity.name.function
+
+    # Page setup management
+    - match: '\b(create|delete|isValidName|pageLayout|pageName|save)\b'
+      scope: entity.name.function
+
+
+    ###################
+    # Chapter 31 Tables
+    ###################
+
+    # Data types
+    - match: '\b(TableBorderStyle|TableBorderPosition)\b'
+      scope: entity.name.type
+
+    # Table constants
+    - match: '\b(noborder|solidBorder|dottedborder|left|right|top|bottom)\b'
+      scope: constant.numeric.integer
+
+    # Table management
+    - match: '\b(table|row|cell|tableContents|deleteCell|deleteColumn|deleteRow|deleteTable|undeleteCell|undeleteColumn|undeleteRow|undeleteTable)\b'
+      scope: entity.name.function
+
+    # Table manipulation
+    - match: '\b(appendCell|appendColumn|appendRow|insertCell|insertColumn|insertRow|getTable|getRow|getCellAlignment|getCellWidth|getCellShowChangeBars|getCellShowLinkArrows|getShowTableAcrossModule|setAllCellsAlignment|setAllCellsBorder|setAllCellsShowChangeBars|setAllCellsShowLinkArrows|setAllCellsWidth|setCellAlignment|setCellBorder|setCellShowChangeBars|setCellShowLinkArrows|setCellWidth|setColumnAlignment|setColumnShowChangeBars|setColumnShowLinkArrows|setColumnWidth|setRowWidth|setShowTableAcrossModule|toTable)\b'
+      scope: entity.name.function
+
+    # Table attributes
+    - match: '\b(reserved|useDefaultTableAttribute|enableDefaultTableAttribute|overrideTableAttribute|defaultTableAttribute)\b'
+      scope: entity.name.function
+
+
+    ######################
+    # Chapter 32 Rich text
+    ######################
+
+    # Data types
+    - match: '\b(RichText|RichTextParagraph)\b'
+      scope: entity.name.type
+
+    # Rich text processing
+    - match: '\b(richText|richTextWithOle|richTextWithOleNoCache|richTextNoOle|removeUnlistedRichText|indentLevel|bulletStyle|isBullet|isUrl|isOle|getEmbeddedOle)\b'
+      scope: entity.name.function
+
+    - match: '\b(text|bold|last|italic|newline|strikethru|subscript|superscript|underline)\b'
+      scope: variable.other.member
+
+    # Rich text strings
+    - match: '\b(cutRichText|findRichText|isRichText|replaceRichText|richtext_identifier|pasteToEditbox|richClip|setRichClip|rtfSubString|exportAttributeToFile|stringOf|applyTextFormattingToParagraph|exportRTFString|richTextFragment)\b'
+      scope: entity.name.function
+
+    # Enhanced character support
+    - match: '\b(charsetAnsi|charsetSymbol|charsetGreek|charsetRussian|charsetEastEurope|charsetTurkish|charsetHebrew|charsetDefault|characterSet|fontTable)\b'
+      scope: constant.numeric.integer
+
+    # Importing rich text
+    - match: '\b(importRTF)\b'
+      scope: entity.name.function
+
+    # Diagnostic perms
+    - match: '\b(enableObjectTextAssignmentWarnings|disableObjectTextAssignmentWarnings|enableObjectTextRichTextWarnings|disableObjectTextRichTextWarnings|enableGeneralRichTextWarnings|disableGeneralRichTextWarnings|enableRepeatWarnings|disableRepeatWarnings|enableDisplayWarnings|disableDisplayWarnings|dxlWarningFilename|dxlWarningLineNumber)\b'
+      scope: entity.name.function
+
+
+    #############################
+    # Chapter 33 Spelling Checker
+    #############################
+
+    # Data types
+    - match: '\b(SpellingOptions|SpellingError|SpellingAlternatives|Languages|GrammarRules|Dictionary|AlternativeWord)\b'
+      scope: entity.name.type
+
+    # Constants and general functions
+    - match: '\b(spell|spellFix|alternative|alternatives|getNextError|returnBuffer|o|attribute|wordStart|wordEnd|sentenceStart|sentenceEnd|ruleType|spellingErrorsFirst|deletionError|returnBuffer|wordStart|wordEnd|sentenceStart|sentenceEnd|correctionComplete|skipSentence|ruleType|deletionError|getErrorString|getErrorStartPos|getErrorStopPos|getSentenceStartPos|getSentenceStopPos|getCorrectionComplete|ignoreWord|alternative)\b'
+      scope: entity.name.function
+
+    - match: '\b(USEnglish|UKEnglish|French|German|GermanReform|databaseSpellingOptions|userSpellingOptions|databaseDictionary|clientDictionary|informalGrammar|standardGrammar|formalGrammar|spellingOnly|quickProof|fullProof)\b'
+      scope: constant.numeric.integer
+
+    # Language and Grammar
+    - match: '\b(spGetLanguages|getLanguage|getId|getName|isSupported|getGrammarRules|getName|getExplanation|getOptions|save|getLanguage|setLanguage|getEnglishOptions|setEnglishOptions|getUKOptions|setUKOptions|getFrenchOptions|setFrenchOptions|getGermanOptions|setGermanOptions|getGreekOptions|setGreekOptions|getSpanishOptions|setSpanishOptions|getCatalanOptions|setCatalanOptions|getRussianOptions|setRussianOptions|getGrammarLevel|setGrammarLevel|setSpellingCheckingMode|getSpellingCheckingMode|getSpellingFirst|setSpellingFirst|getIgnoreReadOnly|setIgnoreReadOnly)\b'
+      scope: entity.name.function
+
+    # Spelling Dictionary
+    - match: '\b(open|close|getWord|getAlternative|insert|remove|isDatabaseDict)\b'
+      scope: entity.name.function
+
+    # Miscellaneous Spelling
+    - match: '\b(anagram|wildcard)\b'
+      scope: entity.name.function
+
+
+    #######################################
+    # Chapter 34 Database Integrity Checker
+    #######################################
+
+    # Data types
+    - match: '\b(IntegrityResultsData|IntegrityCheckItem|IntegrityProblem|ProblemItem|IntegrityItemType)\b'
+      scope: entity.name.type
+
+    # Database Integrity Types
+    - match: '\b(referencesInvalidFolder|referencesValidFolder|noDataFound|orphanedItem|invalidProjectListEntry|missingProjectListEntry|startedCheck|completedCheck|failedCheck)\b'
+      scope: constant.numeric.integer
+
+    # Database Integrity Perms
+    - match: '\b(checkDatabaseIntegrity|checkFolderIntegrity|canceled|cancelled|uniqueID|problems|timestamp|folder|type|referencesInvalidFolder|referencesValidFolder|noDataFound|orphanedItem|invalidProjectListEntry|missingProjectListEntry|startedCheck|completedCheck|failedCheck|referencesInvalidFolder|referencesValidFolder|noDataFound|orphanedItem|invalidProjectListEntry|missingProjectListEntry|referencesInvalidFolder|referencesValidFolder|noDataFound|orphanedItem|invalidProjectListEntry|missingProjectListEntry|text|parentRefID|parentRef|setParent|addProjectEntry|convertToFolder|repaired|delete|checkItem|everSectioned)\b'
+      scope: entity.name.function
+
+
+    ########################
+    # Chapter 35 Discussions
+    ########################
+
+    # Data types
+    - match: '\b(Discussion|Comment|DiscussionStatus)\b'
+      scope: entity.name.type
+
+    # Properties
+    - match: '\b(status|summary|createdBy|createdByName|createdByFullName|createdOn|createdDataTimestamp|lastModifiedBy|lastModifiedByName|lastModifiedByFullName|lastModifiedOn|lastModifiedDataTimestamp|firstVersion|lastVersion|firstVersionIndex|lastVersionIndex|text|moduleVersionIndex|status|moduleVersion|onCurrentVersion|changedStatus|dataTimestamp|createdBy|createdByName|createdByFullName|createdOn|discussion)\b'
+      scope: variable.other.member
+
+    # Operations
+    - match: '\b(create|addComment|closeDiscussion|reopenDiscussion|deleteDiscussion|sortDiscussions|getDiscussions|getObjectDiscussions|getComments|mayModifyDiscussionStatus|baselineIndex|isDiscussionColumn|setDiscussionColumn)\b'
+      scope: entity.name.function
+
+    # Triggers
+    - match: '\b(comment|discussion|dispose)\b'
+      scope: entity.name.function
+
+    # Discussions access controls
+    - match: '\b(canModifyDiscussions|canEveryoneModifyDiscussions|addUser|addGroup|removeUser|removeGroup|saveDiscussionAccessList)\b'
+      scope: entity.name.function
+
+
+    ##############################
+    # Chapter 36 General functions
+    ##############################
+
+    # Data types
+    - match: '\b(ArchiveItem|ArchiveData|LockList|Lock|HttpHeader|HttpHeaderEntry|HttpRequest|HttpResponse|HttpBody|HttpVerb|HttpDelete|HttpGet|HttpHead|HttpPut|HttpPost|Future|OSLCDXLService)\b'
+      scope: entity.name.type
+
+    # Error handling
+    - match: '\b(error|lastError|noError|unixerror|warn|dxlHere)\b'
+      scope: entity.name.function
+
+    # Archive and restore
+    - match: '\b(archive|archiveFiles|getArchiveType|getModuleDetails|getProjectDetails|getUserlistDetails|restore|restoreModule|restoreFiles|restoreProject|restoreUserlist|select|deselect|rename|get|canCreateServerArchive|canRestoreServerArchive|canReadServerArchiveFile|canWriteServerArchiveFile|canUseServerArchive)\b'
+      scope: entity.name.function
+
+    - match: '\b(archiveItemName|archiveItemDescription|archiveItemType|archiveItemSelected|archiveItemSoftDeleted)\b'
+      scope: variable.other.member
+
+    - match: '\b(zipNotArchive|zipProjectArchive|zipModuleArchive|zipPre3ProjectArchive|zipPre3ModuleArchive|zipPre5ProjectArchive|zipPre5ModuleArchive|zipProject5Archive|zipModule5Archive|zipUserListArchive|zipUserList5Archive)\b'
+      scope: constant.numeric.integer
+
+    # Checksum validation
+    - match: '\b(createChecksumFile|loadChecksumFile|compareChecksumFile)\b'
+      scope: entity.name.function
+
+    # Locking
+    - match: '\b(getLocksInDatabase|getLocksInFolder|getLocksInModule|isLocked|isLockedClosed|isLockedByUser|lock|unlock|delete|remove|shareLock|unlockDiscardAll|unlockSaveAll|unlockDiscardSection|unlockSaveSection|requestLock)\b'
+      scope: entity.name.function
+
+    - match: '\b(annotation|host|id|resourceName|user|childLocked|date|lockMode|item|connectionId)\b'
+      scope: variable.other.member
+
+    - match: '\b(lockShare|lockWrite|lockRemoved)\b'
+      scope: constant.numeric.integer
+
+    # HTML functions
+    - match: '\b(htmlText|setAttrFromHTML)\b'
+      scope: entity.name.function
+
+    # HTTP Server
+    - match: '\b(header|body|code|isOk|delete|get|add|create|value|key|setValue|setKey|size)\b'
+      scope: entity.name.function
+
+    # Asynchronous HTTP requests
+    - match: '\b(isReady|getFullfilledTime|getValueHttpResponse|refresh|getData|setData|removeData)\b'
+      scope: entity.name.function
+
+    # OSLC DXL Services
+    - match: '\b(setDxlServiceResult|addOrUpdateOSLCDXLService|removeOSLCDXLService|removeOSLCDXLService)\b'
+      scope: entity.name.function
+
+    - match: '\b(name|description|dxlString|functionName)\b'
+      scope: variable.other.member
+
+    # Broadcast Messaging
+    - match: '\b(sendBroadcastMessage)\b'
+      scope: entity.name.function
+
+    # Converting a symbol character to Unicode
+    - match: '\b(symbolToUnicode)\b'
+      scope: entity.name.function
+
+    # Timer
+    - match: '\b(timer|stopTimer|startTimer|isTimer|getTimerName|getTimerInterval|getTimerID|getTimerRunning)\b'
+      scope: entity.name.function
