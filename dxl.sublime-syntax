@@ -375,7 +375,7 @@ contexts:
     ####################
 
     # Data types
-    - match: '\b(Module|ModuleVersion|BaselineSetDefinition|AccessRec|BaselineSet|History|HistoryType|HistorySession|ModuleProperties)\b'
+    - match: '\b(Module|ModuleVersion|Baseline|BaselineSetDefinition|AccessRec|BaselineSet|History|HistoryType|HistorySession|ModuleProperties)\b'
       scope: entity.name.type
 
     # Module access controls
